@@ -25,8 +25,14 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public  ResponseEntity<List<Product>> getAllProducts(
+    		@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
+    	List<Product> products = productService.getAllProducts(page,pageSize,sortBy,sortDir);
+    	return new ResponseEntity<>(products, HttpStatus.OK);
+
     }
 
 
@@ -57,15 +63,34 @@ public class ProductController {
     }
 
     // TODO: API to search products by name
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProductsByName(@RequestParam String name){
+    	List<Product> response = productService.findByName(name);
+    	return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
 
     // TODO: API to filter products by category
+    @GetMapping("/filter/category")
+    public ResponseEntity<List<Product>> filterByCategory(@RequestParam String category){ 
+    	List<Product> response = productService.findByCategory(category);
+    	return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
     // TODO: API to filter products by price range
-
+     @GetMapping("/filter/price")
+     public ResponseEntity<List<Product>> filterByPrice(@RequestParam Double minPrice, @RequestParam Double maxPrice ){
+        List<Product> response = productService.findByPriceRange(minPrice,maxPrice);
+        return new ResponseEntity<>(response , HttpStatus.OK);
+     }
 
     // TODO: API to filter products by stock quantity range
+     @GetMapping("/filter/stock")
+     public ResponseEntity<List<Product>> filterByStock(@RequestParam Integer minStock, @RequestParam Integer maxStock){
+    	 List<Product> response = productService.findByStockRange(minStock, maxStock);
+    	 return new ResponseEntity<>(response, HttpStatus.OK);
+     }
 
 
 }
